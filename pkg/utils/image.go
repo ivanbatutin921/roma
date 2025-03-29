@@ -21,9 +21,9 @@ const (
 	MaxImageSize = 5 * 1024 * 1024
 	// Директория для сохранения изображений
 	ImageDir = "./uploads"
-	// Максимальные размеры для баннера профиля
-	MaxBannerWidth  = 1200
-	MaxBannerHeight = 400
+	// Максимальные размеры для баннера профиля (10000 позволяет загружать практически любой размер)
+	MaxBannerWidth  = 10000
+	MaxBannerHeight = 10000
 )
 
 // SaveImageFromBase64 сохраняет изображение из base64 строки
@@ -80,6 +80,8 @@ func SaveImageFromBase64(base64String, prefix string) (string, error) {
 		ext = ".png"
 	case "image/gif":
 		ext = ".gif"
+	case "image/webp":
+		ext = ".webp"
 	default:
 		return "", fmt.Errorf("неподдерживаемый формат изображения: %s", contentType)
 	}

@@ -1,9 +1,7 @@
 package api
 
 import (
-	"bytes"
 	"fmt"
-	"image"
 	"log"
 	"net/http"
 	"os"
@@ -246,23 +244,6 @@ func UploadProfileBanner(c *fiber.Ctx) error {
 		})
 	}
 
-	// Проверка размеров изображения для баннера
-	img, _, err := image.Decode(bytes.NewReader(fileData))
-	if err != nil {
-		log.Printf("Ошибка при декодировании изображения: %v", err)
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "невозможно декодировать изображение",
-		})
-	}
-
-	bounds := img.Bounds()
-	if bounds.Dx() > utils.MaxBannerWidth || bounds.Dy() > utils.MaxBannerHeight {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": fmt.Sprintf("размер баннера превышает максимально допустимый (%dx%d)",
-				utils.MaxBannerWidth, utils.MaxBannerHeight),
-		})
-	}
-
 	// Определяем тип контента
 	contentType := http.DetectContentType(fileData)
 	var ext string
@@ -273,6 +254,8 @@ func UploadProfileBanner(c *fiber.Ctx) error {
 		ext = ".png"
 	case "image/gif":
 		ext = ".gif"
+	case "image/webp":
+		ext = ".webp"
 	default:
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": fmt.Sprintf("неподдерживаемый формат изображения: %s", contentType),
