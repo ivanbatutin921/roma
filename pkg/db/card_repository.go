@@ -203,16 +203,10 @@ func GetUserCards(userID string, page, limit int, currentUserID string) (*models
 	// Формируем ответ
 	for rows.Next() {
 		var card models.Card
-		var likedBy sql.NullString
 
 		if err := rows.Scan(&card.ID, &card.UserID, &card.UserName, &card.Image, &card.Title,
-			&card.Description, &card.Text, &card.Likes, &likedBy, &card.CreatedAt, &card.UpdatedAt); err != nil {
+			&card.Description, &card.Text, &card.Likes, &card.CreatedAt, &card.UpdatedAt); err != nil {
 			return nil, err
-		}
-
-		// Парсим лайки
-		if likedBy.Valid && likedBy.String != "" {
-			card.LikedBy = strings.Split(likedBy.String, ",")
 		}
 
 		// Проверяем, поставил ли текущий пользователь лайк
